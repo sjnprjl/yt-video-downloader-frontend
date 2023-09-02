@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
 import { api } from "../../api";
 import { YtVideo } from "../../interface/yt-video.interface";
+import toast from "react-hot-toast";
+import { axiosErrorMessage } from "../../utils";
+import { AxiosError } from "axios";
 
 type Status = "idle" | "loading";
 
@@ -21,6 +24,8 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
                 inputRef.current.value = '';
             } catch (err) {
                 console.log('error occured', err);
+                const message = axiosErrorMessage(err as AxiosError);
+                toast.error(message);
             } finally {
                 setDownloadStatus('idle');
             }
@@ -29,11 +34,11 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
 
 
     return (
-        <div className="w-full mt-2">
+        <div className="w-full mt-4">
             {/* info text */}
             <div className="text-center">
                 <h1 className="text-3xl font-bold">Youtube Video Downloader</h1>
-                <p className="text-center">Download youtube video easily.</p>
+                <p className="text-center mb-4">Download youtube video easily.</p>
             </div>
             {/* input */}
             <div className="flex gap-2 flex-1 w-full">

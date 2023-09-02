@@ -1,10 +1,13 @@
+import { Toaster } from "react-hot-toast";
 import { DownloadInputCard } from "./components/DownloadInputCard"
 import { VideoDownloadCardContainer } from "./containers/VideoDownloadCardContainer"
 import { YtVideo } from "./interface/yt-video.interface";
 import { useVideoState } from "./stores";
 
+
 function App() {
   const setVideos = useVideoState((state) => state.addNewVideo);
+
 
 
   function handleNewVideo(metadata: YtVideo) {
@@ -16,6 +19,9 @@ function App() {
     <div className="mt-2 w-full">
       <VideoDownloadCardContainer />
     </div>
+    <Toaster toastOptions={{
+      className: 'toast-style',
+    }} />
   </div>
 }
 

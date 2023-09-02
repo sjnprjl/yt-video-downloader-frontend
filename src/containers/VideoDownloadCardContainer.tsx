@@ -5,6 +5,9 @@ import { YtVideo } from "../interface/yt-video.interface";
 import { useVideoState } from "../stores";
 import { saveAs } from 'file-saver';
 import { Modal } from "../components/Modal";
+import toast from "react-hot-toast";
+import { axiosErrorMessage } from "../utils";
+import { AxiosError } from "axios";
 
 export function VideoDownloadCardContainer() {
   const [openModal, setOpenModal] = useState(false);
@@ -64,10 +67,13 @@ export function VideoDownloadCardContainer() {
         },
       });
       const blob = response.data;
+      toast.success('Download successfully!');
       saveAs(blob, item.title);
       mutateVideoState(item.id, { status: 'success', progress: 100 });
     } catch (err) {
       console.log(`error reason for video id ${item.id}`, err);
+      const message = axiosErrorMessage(err as AxiosError);
+      toast.error(message);
       mutateVideoState(item.id, { status: 'error' })
     }
   }
