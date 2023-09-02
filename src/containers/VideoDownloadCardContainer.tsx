@@ -73,7 +73,7 @@ export function VideoDownloadCardContainer() {
   }
 
   return <div className="flex flex-col gap-2 w-full overflow-y-auto max-h-[70vh]">
-    <Modal title={"Are you sure?"} description={"Are you sure want to delete"} open={openModal}>
+    <Modal title={"Are you sure?"} description={`You are going to remove download of video "${toAbortItem?.title}". This cannot be undone.`} open={openModal}>
       <div className="modal-action">
         <button className="btn btn-neutral" onClick={() => setOpenModal(false)}>No</button>
         <button className="btn bg-red-600 hover:bg-red-700" onClick={abortDownload}>Yes</button>
