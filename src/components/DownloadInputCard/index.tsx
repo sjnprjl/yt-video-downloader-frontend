@@ -32,6 +32,10 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
     }
   }
 
+  const validUrl = new RegExp(
+    "(https://www.|http://www.|https://|http://)?[a-zA-Z]{2,}(.[a-zA-Z]{2,})(.[a-zA-Z]{2,})?/[a-zA-Z0-9]{2,}|((https://www.|http://www.|https://|http://)?[a-zA-Z]{2,}(.[a-zA-Z]{2,})(.[a-zA-Z]{2,})?)|(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}.[a-zA-Z0-9]{2,}.[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})? "
+  );
+
   return (
     <div className="w-full mt-4">
       {/* info text */}
@@ -46,6 +50,14 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
         <input
           disabled={downloadStatus === "loading"}
           ref={inputRef}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              validUrl.test(inputRef?.current?.value ?? "")
+                ? //   inputRef?.current?.value != ""
+                  handleDownload()
+                : toast.error("Please Enter Valid Video Url");
+            }
+          }}
           type="text"
           placeholder="Enter video URL"
           className="input input-bordered flex-1"
@@ -53,15 +65,16 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
         <button
           disabled={downloadStatus === "loading"}
           onClick={() => {
-            inputRef?.current?.value != ""
+            validUrl.test(inputRef?.current?.value ?? "")
               ? handleDownload()
-              : toast.error("Please Enter Video Url");
+              : toast.error("Please Enter Valid Video Url");
           }}
           className="btn btn-primary"
         >
-          {downloadStatus === "loading" && inputRef?.current?.value != "" && (
-            <span className="loading loading-spinner"></span>
-          )}
+          {downloadStatus === "loading" &&
+            validUrl.test(inputRef?.current?.value ?? "") && (
+              <span className="loading loading-spinner"></span>
+            )}
           Download
         </button>
       </div>
