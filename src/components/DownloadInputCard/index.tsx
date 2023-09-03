@@ -54,7 +54,7 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
           disabled={downloadStatus === "loading"}
           onClick={() => {
             inputRef?.current?.value != ""
-              ? handleDownload
+              ? handleDownload()
               : toast.error("Please Enter Video Url");
           }}
           className="btn btn-primary"
