@@ -15,20 +15,25 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
   const [downloadStatus, setDownloadStatus] = useState<Status>("idle");
 
   async function handleDownload() {
-    setDownloadStatus("loading");
-    if (inputRef.current) {
-      const url = encodeURIComponent(inputRef.current.value);
-      try {
-        const { data } = await api.get(`/yt/${url}/metadata`);
-        props.onMetadataFound?.(data);
-        inputRef.current.value = "";
-      } catch (err) {
-        console.log("error occured", err);
-        const message = axiosErrorMessage(err as AxiosError);
-        toast.error(message);
-      } finally {
-        setDownloadStatus("idle");
+    if (validUrl.test(inputRef?.current?.value ?? "")) {
+      setDownloadStatus("loading");
+
+      if (inputRef.current) {
+        const url = encodeURIComponent(inputRef.current.value);
+        try {
+          const { data } = await api.get(`/yt/${url}/metadata`);
+          props.onMetadataFound?.(data);
+          inputRef.current.value = "";
+        } catch (err) {
+          console.log("error occured", err);
+          const message = axiosErrorMessage(err as AxiosError);
+          toast.error(message);
+        } finally {
+          setDownloadStatus("idle");
+        }
       }
+    } else {
+      toast.error("Please Enter Valid Video Url");
     }
   }
 
@@ -52,10 +57,7 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
           ref={inputRef}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
-              validUrl.test(inputRef?.current?.value ?? "")
-                ? //   inputRef?.current?.value != ""
-                  handleDownload()
-                : toast.error("Please Enter Valid Video Url");
+              handleDownload();
             }
           }}
           type="text"
@@ -64,11 +66,7 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
         />
         <button
           disabled={downloadStatus === "loading"}
-          onClick={() => {
-            validUrl.test(inputRef?.current?.value ?? "")
-              ? handleDownload()
-              : toast.error("Please Enter Valid Video Url");
-          }}
+          onClick={handleDownload}
           className="btn btn-primary"
         >
           {downloadStatus === "loading" &&
