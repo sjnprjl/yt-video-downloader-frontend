@@ -53,13 +53,13 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
         <button
           disabled={downloadStatus === "loading"}
           onClick={() => {
-            inputRef?.current?.value != "" && handleDownload;
-            inputRef?.current?.value == "" &&
-              toast.error("Please Enter Video Url");
+            inputRef?.current?.value != ""
+              ? handleDownload
+              : toast.error("Please Enter Video Url");
           }}
           className="btn btn-primary"
         >
-          {downloadStatus === "loading" && !inputRef?.current?.value == "" && (
+          {downloadStatus === "loading" && inputRef?.current?.value != "" && (
             <span className="loading loading-spinner"></span>
           )}
           Download
