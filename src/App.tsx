@@ -8,8 +8,6 @@ import { useVideoState } from "./stores";
 function App() {
   const setVideos = useVideoState((state) => state.addNewVideo);
 
-
-
   function handleNewVideo(metadata: YtVideo) {
     setVideos(metadata);
   }
