@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { api } from "../../api";
 import { YtVideo } from "../../interface/yt-video.interface";
 import toast from "react-hot-toast";
-import { axiosErrorMessage } from "../../utils";
+import { axiosErrorMessage, isValidUrl } from "../../utils";
 import { AxiosError } from "axios";
 
 type Status = "idle" | "loading";
@@ -15,31 +15,25 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
   const [downloadStatus, setDownloadStatus] = useState<Status>("idle");
 
   async function handleDownload() {
-    if (validUrl.test(inputRef?.current?.value ?? "")) {
-      setDownloadStatus("loading");
+    if (!inputRef.current) return;
+    if (!isValidUrl(inputRef.current.value))
+      return toast.error('Please enter a valid URL.');
 
-      if (inputRef.current) {
-        const url = encodeURIComponent(inputRef.current.value);
-        try {
-          const { data } = await api.get(`/yt/${url}/metadata`);
-          props.onMetadataFound?.(data);
-          inputRef.current.value = "";
-        } catch (err) {
-          console.log("error occured", err);
-          const message = axiosErrorMessage(err as AxiosError);
-          toast.error(message);
-        } finally {
-          setDownloadStatus("idle");
-        }
-      }
-    } else {
-      toast.error("Please Enter Valid Video Url");
+    setDownloadStatus("loading");
+    const url = encodeURIComponent(inputRef.current.value);
+    try {
+      const { data } = await api.get(`/yt/${url}/metadata`);
+      props.onMetadataFound?.(data);
+      inputRef.current.value = "";
+    } catch (err) {
+      console.log("error occured", err);
+      const message = axiosErrorMessage(err as AxiosError);
+      toast.error(message);
+    } finally {
+      setDownloadStatus("idle");
     }
   }
 
-  const validUrl = new RegExp(
-    "(https://www.|http://www.|https://|http://)?[a-zA-Z]{2,}(.[a-zA-Z]{2,})(.[a-zA-Z]{2,})?/[a-zA-Z0-9]{2,}|((https://www.|http://www.|https://|http://)?[a-zA-Z]{2,}(.[a-zA-Z]{2,})(.[a-zA-Z]{2,})?)|(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}.[a-zA-Z0-9]{2,}.[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})? "
-  );
 
   return (
     <div className="w-full mt-4">
@@ -70,7 +64,7 @@ export function DownloadInputCard(props: DownloadInputCardProps) {
           className="btn btn-primary"
         >
           {downloadStatus === "loading" &&
-            validUrl.test(inputRef?.current?.value ?? "") && (
+            (
               <span className="loading loading-spinner"></span>
             )}
           Download
